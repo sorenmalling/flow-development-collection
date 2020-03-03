@@ -86,6 +86,9 @@ class PersistenceManager extends AbstractPersistenceManager
      */
     public function persistAll($onlyWhitelistedObjects = false)
     {
+        if ($this->entityManager->getUnitOfWork()->size() === 0) {
+            return;
+        }
         if ($onlyWhitelistedObjects) {
             $unitOfWork = $this->entityManager->getUnitOfWork();
             /** @var \Doctrine\ORM\UnitOfWork $unitOfWork */
@@ -347,6 +350,9 @@ class PersistenceManager extends AbstractPersistenceManager
     public function hasUnpersistedChanges()
     {
         $unitOfWork = $this->entityManager->getUnitOfWork();
+        if ($unitOfWork->size() === 0) {
+            return false;
+        }
         $unitOfWork->computeChangeSets();
 
         if ($unitOfWork->getScheduledEntityInsertions() !== []
