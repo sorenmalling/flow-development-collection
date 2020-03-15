@@ -362,7 +362,7 @@ class Account
      * @return boolean
      * @api
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return ($this->expirationDate === null || $this->expirationDate > $this->now);
     }
