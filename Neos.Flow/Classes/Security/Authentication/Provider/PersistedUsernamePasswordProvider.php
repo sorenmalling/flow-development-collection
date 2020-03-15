@@ -12,8 +12,10 @@ namespace Neos\Flow\Security\Authentication\Provider;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Account;
-use Neos\Flow\Security\AccountRepository;
+use Neos\Flow\Security\AccountInterface;
+use Neos\Flow\Security\AccountRepositoryInterface;
+use Neos\Flow\Security\Authentication\Token\UsernamePassword;
+use Neos\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic;
 use Neos\Flow\Security\Authentication\Token\UsernamePasswordTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
@@ -28,7 +30,7 @@ use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 class PersistedUsernamePasswordProvider extends AbstractProvider
 {
     /**
-     * @var AccountRepository
+     * @var AccountRepositoryInterface
      * @Flow\Inject
      */
     protected $accountRepository;
@@ -77,7 +79,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
             throw new UnsupportedAuthenticationTokenException(sprintf('This provider cannot authenticate the given token. The token must implement %s', UsernamePasswordTokenInterface::class), 1217339840);
         }
 
-        /** @var $account Account */
+        /** @var $account AccountInterface */
         $account = null;
 
         if ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {
