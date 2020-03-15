@@ -241,8 +241,7 @@ class Account
      */
     public function hasRole(Role $role)
     {
-        $this->initializeRoles();
-        return array_key_exists($role->getIdentifier(), $this->roles);
+        return $this->getRoles()->has($role);
     }
 
     /**
