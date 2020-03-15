@@ -80,6 +80,7 @@ class Account
 
     /**
      * @Flow\Transient
+     * @Flow\IgnoreValidation
      * @var array<Role>
      */
     protected $roles;
