@@ -585,6 +585,8 @@ Neos\Flow\Security\Authentication\Token\PasswordTokenInterface:
 Neos\Flow\Security\AccountRepositoryInterface:
   className: Neos\Flow\Security\AccountRepository
 
+Neos\Flow\Security\AccountInterface:
+  className: Neos\Flow\Security\Account
 #                                                                          #
 # Session                                                                  #
 #                                                                          #
