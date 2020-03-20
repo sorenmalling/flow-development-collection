@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Provider;
  * source code.
  */
 
-use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\Provider\FileBasedSimpleKeyProvider;
 use Neos\Flow\Security\Authentication\Token\PasswordToken;
 use Neos\Flow\Security\Authentication\Token\PasswordTokenInterface;
