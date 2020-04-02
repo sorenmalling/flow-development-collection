@@ -54,6 +54,16 @@ final class PersistedUsernamePasswordProvider extends AbstractProvider
     protected $securityContext;
 
     /**
+     * Returns the name of this provider
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
      * Returns the class names of the tokens this provider can authenticate.
      *
      * @return array
@@ -105,9 +115,10 @@ final class PersistedUsernamePasswordProvider extends AbstractProvider
         }
 
         $authenticationToken->setAccount($account);
-
         if ($this->hashService->validatePassword($password, (string) $account->getCredentialsSource())) {
+
             $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
+            $authenticationToken->setAccount($account);
         }
     }
 
