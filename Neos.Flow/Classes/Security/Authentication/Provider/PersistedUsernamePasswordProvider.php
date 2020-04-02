@@ -12,7 +12,12 @@ namespace Neos\Flow\Security\Authentication\Provider;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
+use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
+use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
+use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Security\AccountInterface;
+use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\AccountRepositoryInterface;
 use Neos\Flow\Security\Authentication\Token\UsernamePassword;
 use Neos\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic;
@@ -20,6 +25,7 @@ use Neos\Flow\Security\Authentication\Token\UsernamePasswordTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
+use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 
 /**
@@ -27,31 +33,25 @@ use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
  * Neos\Flow\Security\Authentication\Token\UsernamePassword tokens.
  * The accounts are stored in the Content Repository.
  */
-class PersistedUsernamePasswordProvider extends AbstractProvider
+final class PersistedUsernamePasswordProvider extends AbstractProvider
 {
     /**
-     * @var AccountRepositoryInterface
      * @Flow\Inject
+     * @var ObjectManager
      */
-    protected $accountRepository;
+    protected $objectManager;
 
     /**
-     * @var HashService
      * @Flow\Inject
+     * @var HashService
      */
     protected $hashService;
 
     /**
-     * @var Context
      * @Flow\Inject
+     * @var Context
      */
     protected $securityContext;
-
-    /**
-     * @var \Neos\Flow\Persistence\PersistenceManagerInterface
-     * @Flow\Inject
-     */
-    protected $persistenceManager;
 
     /**
      * Returns the class names of the tokens this provider can authenticate.
@@ -69,9 +69,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
      *
      * @param TokenInterface $authenticationToken The token to be authenticated
      * @return void
-     * @throws UnsupportedAuthenticationTokenException
-     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
-     * @throws \Neos\Flow\Security\Exception\InvalidAuthenticationStatusException
+     * @throws \Exception
      */
     public function authenticate(TokenInterface $authenticationToken)
     {
@@ -95,7 +93,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
 
         $providerName = $this->options['lookupProviderName'] ?? $this->name;
         $this->securityContext->withoutAuthorizationChecks(function () use ($username, &$account, $providerName) {
-            $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($username, $providerName);
+            $account = $this->getAccountRepository()->findActiveByAccountIdentifierAndAuthenticationProviderName($username, $providerName);
         });
 
         $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
@@ -111,6 +109,19 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
         if ($this->hashService->validatePassword($password, (string) $account->getCredentialsSource())) {
             $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
         }
+    }
 
+    /**
+     * @return AccountRepositoryInterface
+     * @throws SecurityException
+     * @throws InvalidConfigurationTypeException | CannotBuildObjectException | UnknownObjectException
+     */
+    private function getAccountRepository(): AccountRepositoryInterface
+    {
+        $accountRepository = $this->objectManager->get($this->options['accountRepositoryClassName'] ?? AccountRepository::class);
+        if (!$accountRepository instanceof AccountRepositoryInterface) {
+            throw new SecurityException(sprintf('The configured "accountRepositoryClassName" is not an instance of %s but of type %s. Check the %s authentication provider configuration', AccountRepositoryInterface::class, get_class($accountRepository), $this->name), 1585837588);
+        }
+        return $accountRepository;
     }
 }
