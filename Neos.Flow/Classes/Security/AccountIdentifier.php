@@ -11,15 +11,16 @@ declare(strict_types=1);
  * source code.
  */
 
-namespace Neos\Flow\Security\Authentication;
+namespace Neos\Flow\Security;
 
 use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
  */
-final class AuthenticationProviderName implements \JsonSerializable
+final class AccountIdentifier implements \JsonSerializable
 {
+
     /**
      * @var string
      */
@@ -85,7 +86,7 @@ final class AuthenticationProviderName implements \JsonSerializable
      */
     public function __clone()
     {
-        throw new \RuntimeException('The ' . __CLASS__ . ' class is not allowed to be cloned', 1585910977);
+        throw new \RuntimeException('The ' . __CLASS__ . ' class is not allowed to be cloned', 1585910860);
     }
 
     /**
@@ -93,7 +94,7 @@ final class AuthenticationProviderName implements \JsonSerializable
      */
     public function __sleep()
     {
-        throw new \RuntimeException('The ' . __CLASS__ . ' class is not allowed to be serialized', 1585910979);
+        throw new \RuntimeException('The ' . __CLASS__ . ' class is not allowed to be serialized', 1585910868);
     }
 
     /**
@@ -101,6 +102,6 @@ final class AuthenticationProviderName implements \JsonSerializable
      */
     private function __wakeup()
     {
-        throw new \RuntimeException('The ' . __CLASS__ . ' class is not allowed to be de-serialized', 1585910981);
+        throw new \RuntimeException('The ' . __CLASS__ . ' class is not allowed to be de-serialized', 1585910894);
     }
 }
