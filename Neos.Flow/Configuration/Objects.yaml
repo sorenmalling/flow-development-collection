@@ -249,8 +249,10 @@ Neos\Flow\Http\Middleware\MiddlewaresChain:
 #                                                                          #
 # MVC                                                                      #
 #                                                                          #
+
 Neos\Flow\Mvc\Routing\RouterInterface:
-  className: Neos\Flow\Mvc\Routing\Router
+  scope: singleton
+  factoryObjectName: Neos\Flow\Mvc\Routing\RouterFactory
 
 Neos\Flow\Mvc\Routing\RouterCachingService:
   properties:
