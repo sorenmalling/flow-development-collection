@@ -88,22 +88,24 @@ class RouterFactory
                     $subject,
                     $matches
                 );
-                $controllerSubpackageKey = ($matches['subpackageKey'] !== '') ? $matches['subpackageKey'] : null;
 
                 $annotation = $reflectionService->getMethodAnnotation($controllerClassName, $methodName, Flow\Route::class);
                 if ($annotation === null) {
                     throw new InvalidAnnotatedMethodException(sprintf('Failed to parse @Flow\Route annotation for method %s->%s.', $controllerClassName, $methodName), 1618491174);
                 }
+                $defaults = [
+                    '@package' => $controllerPackageKey,
+                    '@controller' => $matches['controllerName'],
+                    '@action' => substr($methodName, 0, -6),
+                    '@format' => $annotation->format
+                ];
+                if ($matches['subpackageKey'] !== '') {
+                    $defaults['@subpackage'] = $matches['subpackageKey'];
+                }
                 $routeConfiguration = [
                     'name' => $annotation->name ?? sprintf('Annotated Route (%s->%s)', $controllerClassName, $methodName),
                     'uriPattern' => $annotation->uriPattern,
-                    'defaults' => [
-                        '@package' => $controllerPackageKey,
-                        '@subpackage' => $controllerSubpackageKey,
-                        '@controller' => $matches['controllerName'],
-                        '@action' => substr($methodName, 0, -6),
-                        '@format' => $annotation->format
-                    ],
+                    'defaults' => $defaults,
                     'httpMethods' => $annotation->httpMethods,
                     'appendExceedingArguments' => $annotation->appendExceedingArguments
                 ];
