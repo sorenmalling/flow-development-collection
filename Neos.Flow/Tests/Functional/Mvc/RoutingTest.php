@@ -18,6 +18,7 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Route;
+use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestAController;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingTestAController;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -407,13 +408,10 @@ class RoutingTest extends FunctionalTestCase
                 ],
             ]
         ];
-        $this->router->setRoutesConfiguration($routesConfiguration);
+        $mockRouter = new Router($routesConfiguration);
         $baseUri = new Uri('http://localhost');
-        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty()));
+        $actualResult = $mockRouter->resolve(new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty()));
         self::assertSame('/custom/uri/pattern', (string)$actualResult);
-
-        // reset router configuration for following tests
-        $this->router->setRoutesConfiguration(null);
     }
 
     /**
